@@ -9,6 +9,7 @@ from pathlib import Path
 import json
 import tempfile
 import gradio as gr
+from gradio.themes import Soft
 import pandas as pd
 from inference import ModelManager, classify_score, image_metadata
 from video_utils import analyze_video
@@ -37,7 +38,7 @@ def run_image(path, threshold, margin, progress=gr.Progress()):
         return md, {**meta, 'assessment': decision['label'], 'fake_score': round(score, 6),
                     'real_score': round(1-score, 6), 'threshold': float(threshold),
                     'uncertainty_margin': float(margin), 'model': Path(MODEL_PATH).name,
-                    'model_input': '224x224 RGB float32; no additional /255 scaling'}
+                    'model_input': '224x224 RGB float32; model applies internal EfficientNet scaling'}
     except Exception as exc:
         return f'### Image analysis failed\n{exc}', {}
 
@@ -64,7 +65,7 @@ CSS = """
 #hero h1{color:#f2f8ff;letter-spacing:-1px}#hero p{color:#b6c9d8}.result{border:1px solid #29445a;background:#101d2d;border-radius:14px;padding:16px;min-height:110px}
 footer{display:none!important}
 """
-with gr.Blocks(title='Deepfake Detection Studio', theme=gr.themes.Soft(primary_hue='cyan',secondary_hue='blue',neutral_hue='slate'), css=CSS) as demo:
+with gr.Blocks(title='Deepfake Detection Studio', theme=Soft(primary_hue='cyan',secondary_hue='blue',neutral_hue='slate'), css=CSS) as demo:
     with gr.Column(elem_id='hero'):
         gr.Markdown('# Deepfake Detection Studio\nAI-assisted image and video screening with your trained EfficientNetB0 classifier.')
         gr.Markdown(f'**Status:** {MODEL_STATUS}')
